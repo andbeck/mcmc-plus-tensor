@@ -1,8 +1,10 @@
 #### -----------------------------------------------------------------------------------------
 #### Begin tensor.stats FUNCTION
 #### By Matt Robinson and Andrew Beckerman
-
+####
 ## Now Hosted on BitBucket (7.4.14)
+## NOTE CURRENTLY EXPECT MODELS FIT TO RETURN JOINT POSTERIOR WITH LENGTH 1000
+## ENSURE that your models have nitts (!) and burnin's set to deliver you 1000
 #### -----------------------------------------------------------------------------------------
 
 tensor.stats<-function(models,no.traits,no.trt){
@@ -114,7 +116,7 @@ tensor.stats<-function(models,no.traits,no.trt){
 
 		for (eval in 1:(n*(n+1)/2)){ 								#number of eigenvalues of covariance tensor
 			for (i in 1:n){ 										#constructing an n*n eigentensor from each eigenvector of S matrix
-    			eigten[i+n*(eval-1),i]<-eigvecs[i,eval] 				#this loop calculates the diagonal
+    			eigten[i+n*(eval-1),i]<-eigvecs[i,eval] 			#this loop calculates the diagonal
 			}
 
 			count<-1

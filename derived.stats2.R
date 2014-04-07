@@ -8,8 +8,12 @@
 ##
 ## the majority of the tests rely on a comparison of within and between samples from
 ## the posterior estimates of both matrices (see Ovaskainen 2008)
-
+##
 ## Now Hosted on BitBucket (7.4.14)
+##
+## NOTE CURRENTLY EXPECT MODELS FIT TO RETURN JOINT POSTERIOR WITH LENGTH 1000
+## ENSURE that your models have nitts (!) and burnin's set to deliver you 1000
+
 #--------------------------------------------------------------------------------------#
 
 derived.stats2<-function(model1,model2,no.traits){
@@ -251,7 +255,7 @@ derived.stats2<-function(model1,model2,no.traits){
 	
 	# Gmax		
 	mcore[2,1:4]<-c(posterior.mode(mcmc(pvarGmax[,1])), HPDinterval(mcmc(pvarGmax[,1])),
-		ifelse(all(HPDinterval(mcmc(pvarGmax[,1]))>0)|all(HPDinterval(mcmc(pvarGmax[,1]))<0),0.05,NA))			# Variance in Gmax (1st axis) in E1
+		ifelse(all(HPDinterval(mcmc(pvarGmax[,1]))>0)|all(HPDinterval(mcmc(pvarGmax[,1]))<0),0.05,NA))		# Variance in Gmax (1st axis) in E1
 	mcore[3,1:4]<-c(posterior.mode(mcmc(pvarGmax[,2])), HPDinterval(mcmc(pvarGmax[,2])),
 		ifelse(all(HPDinterval(mcmc(pvarGmax[,2]))>0)|all(HPDinterval(mcmc(pvarGmax[,2]))<0),0.05,NA))		# Variance in Gmax (1st axis) in E2
 	mcore[4,1:4]<-c(posterior.mode(mcmc(pvarGmax[,3])), HPDinterval(mcmc(pvarGmax[,3])),
