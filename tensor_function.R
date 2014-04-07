@@ -1,6 +1,8 @@
 #### -----------------------------------------------------------------------------------------
 #### Begin tensor.stats FUNCTION
 #### By Matt Robinson and Andrew Beckerman
+
+## Now Hosted on BitBucket (7.4.14)
 #### -----------------------------------------------------------------------------------------
 
 tensor.stats<-function(models,no.traits,no.trt){

@@ -8,6 +8,8 @@
 ##
 ## the majority of the tests rely on a comparison of within and between samples from
 ## the posterior estimates of both matrices (see Ovaskainen 2008)
+
+## Now Hosted on BitBucket (7.4.14)
 #--------------------------------------------------------------------------------------#
 
 derived.stats2<-function(model1,model2,no.traits){
