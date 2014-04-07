@@ -131,7 +131,7 @@ derived.stats2<-function(model1,model2,no.traits){
 			}
 		
 		### Volumes
-		#  Two types
+		# Two types
 		# prob dist style (pi^2*sqrtvals)
 		# sum eigenvalues
 		#####
