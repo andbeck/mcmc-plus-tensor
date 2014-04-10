@@ -35,7 +35,8 @@ collect.matrices<-function(model,no.traits=2){
 ## PLOTSUBSPACE 2 - psb2
 ########################################################################################
 
-psb_2trait <- function (model1,model2,no.traits=2,method=c("G","P"),corr = FALSE, shadeCA = TRUE, shadeCB = TRUE, 
+psb_2trait <- function (model1,model2,no.traits=2,method=c("G","P"),
+	corr = FALSE, shadeCA = TRUE, shadeCB = TRUE, 
     axes.lab = FALSE, xlims=NULL, ylims=NULL, xlab="Trait1", ylab="Trait2",...) 
 {
 		if (require(ellipse) == FALSE)

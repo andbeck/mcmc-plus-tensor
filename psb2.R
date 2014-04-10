@@ -11,6 +11,10 @@
 # b) the method - G or P
 # c) the number of traits
 # d) graphical details about shading and axes labels.
+# New details allow suppressing labels, labels showing eigenvectors (default for axes.lab=TRUE)
+# or customised labels via cust.lab=TRUE and then 
+# a vector of three character strings in customLabel=c()
+# also possible to adjust mesh size of hulls - via n - now defaults to 50
 #
 # G plots centred covariance hulls for the G-structure from a MCMCglmm model
 # Could be modified to plot E-matrix : centred Environmental covariance hulls for the R-structure from a MCMCglmm model
@@ -45,7 +49,8 @@ ellipsoid3d<-function(rx=1,ry=1,rz=1,n=30,ctr=c(0,0,0), qmesh=FALSE,trans = par3
 #-----------------------------------------------------------------#
 ## This function is taken from Daniel Adlers and Duncan Murdochs ##
 ##                         rgl package                           ##
-##                     as used by Hadfield                    	 ##
+##                     as used by Hadfield 
+##						n controls mesh size                   	 ##
 #-----------------------------------------------------------------#
 
 if (missing(trans) && !rgl.cur()) trans <- diag(4)
@@ -105,8 +110,10 @@ collect.matrices<-function(model,no.traits,shrink=FALSE){
 ## PLOTSUBSPACE 2 - psb2
 ########################################################################################
 
-psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeCA = TRUE, shadeCB = TRUE, 
-    axes.lab = FALSE,...) 
+psb2 <- function (model1,model2,no.traits,method=c("G","P"),
+	corr = FALSE, shadeCA = TRUE, shadeCB = TRUE, n=50,
+	shade.col.ref = "red", shade.col.other = "blue",
+    axes.lab = FALSE, cust.lab = FALSE, customLabel = NULL,...) 
 {
 	if (require(rgl) == FALSE)
         stop("rgl not loaded")
@@ -152,15 +159,15 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
 	
 	clear3d()
 	s1 <- ellipsoid3d(Aval[1], Aval[2], Aval[3], qmesh = TRUE, 
-        trans = diag(4))
+        trans = diag(4), n=n)
     if (dim(CA)[1] == 3) {
         s1 <- rotate3d(s1, matrix = t(Avec))
     }
     if (shadeCA == TRUE) {
-        shade3d(s1, col = "red")
+        shade3d(s1, col = shade.col.ref)
     }
     else {
-        wire3d(s1, col = "red")
+        wire3d(s1, col = shade.col.ref)
     }
     if (is.null(CB) == FALSE) {
         if (dim(CA)[1] == 3) {
@@ -177,13 +184,13 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
             Bval <- 2 * sqrt(Bval)
         }
         s2 <- ellipsoid3d(Bval[1], Bval[2], Bval[3], qmesh = TRUE, 
-            trans = diag(4))
+            trans = diag(4), n=n)
         s2 <- rotate3d(s2, matrix = t(Bvec))
         if (shadeCB == TRUE) {
-            shade3d(s2, col = "blue")
+            shade3d(s2, col = shade.col.other)
         }
         else {
-            wire3d(s2, col = "blue")
+            wire3d(s2, col = shade.col.other)
         }
     }
    if (dim(CA)[1] < 4) {
@@ -212,12 +219,19 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
     
     # Title and Axes Labels
     if (axes.lab == TRUE) {
-        if(method=="G"){title3d(main="Genetic Covariance Matrices",
+        if(method=="G"){title3d(main="Genetic Covariance Matrices", line=3,
         	xlab = paste("PC1: ",xvec), ylab = paste("PC2: ",yvec), zlab = paste("PC3: ", zvec))}
-        if(method=="E"){title3d(main="Genetic Covariance Matrices",
+        if(method=="E"){title3d(main="E Covariance Matrices",
         	paste("PC1: ",xvec), ylab = paste("PC2: ",yvec), zlab = paste("PC3: ",zvec))}
         }   
     
+	if (cust.lab == TRUE){
+		if(method=="G"){title3d(main="Genetic Covariance Matrices", line=3,
+        	xlab = customLabel[1], ylab = customLabel[2], zlab = customLabel[3])}
+        if(method=="E"){title3d(main="E Covariance Matrices",
+        	xlab = customLabel[1], ylab = customLabel[2], zlab = customLabel[3])}
+        }   
+	
 	cat("Loadings","\n")
 	load<-matrix(round(Avec,2),length(e1mat$Names),3,dimnames=list(c(e1mat$Names),c("PC1","PC2","PC3")))
 	print(load)
@@ -245,11 +259,11 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
 	
 	clear3d()
 	
-	s1 <- ellipsoid3d(Aval[1], Aval[2], Aval[3], qmesh = TRUE,trans = diag(4))
+	s1 <- ellipsoid3d(Aval[1], Aval[2], Aval[3], qmesh = TRUE,trans = diag(4), n=n)
 	 if (dim(CA)[1] == 3){
         s1 <- rotate3d(s1, matrix = t(Avec))}
     		# ADDED TRANSLATION HERE TO MOVE SUBSPACE - require use of wire to see inside
-    		wire3d(translate3d(s1,e1mat$Locate[1],e1mat$Locate[2],e1mat$Locate[3]),col = "red")
+    		wire3d(translate3d(s1,e1mat$Locate[1],e1mat$Locate[2],e1mat$Locate[3]),col = shade.col.ref)
         
         if (is.null(CB) == FALSE) {
         
@@ -267,10 +281,10 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
             Bval <- 2 * sqrt(Bval)
         }
         
-        s2 <- ellipsoid3d(Bval[1], Bval[2], Bval[3], qmesh = TRUE, trans = diag(4))
+        s2 <- ellipsoid3d(Bval[1], Bval[2], Bval[3], qmesh = TRUE, trans = diag(4), n=n)
         s2 <- rotate3d(s2, matrix = t(Bvec))
     		# ADDED TRANSLATION HERE TO MOVE SUBSPACE - require wire to see inside
-    		wire3d(translate3d(s2,e2mat$Locate[1],e2mat$Locate[2],e2mat$Locate[3]),col = "blue")
+    		wire3d(translate3d(s2,e2mat$Locate[1],e2mat$Locate[2],e2mat$Locate[3]),col = shade.col.other)
     		
   		}
   		
@@ -304,15 +318,22 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),corr = FALSE, shadeC
     ptit<-	round(HPDinterval(model1$Sol-model2$Sol),2)
     
     # Title and Axes Labels
+        # Title and Axes Labels
     if (axes.lab == TRUE) {
-        title3d(main="Phenotypic Covariance Matrices",
-        	paste("PC1: ",xvec), ylab = paste("PC2: ",yvec), zlab = paste("PC3: ",zvec))
-    }
+        if(method=="P"){title3d(main="Phenotypic Covariance Matrices", line=3,
+        	xlab = paste("PC1: ",xvec), ylab = paste("PC2: ",yvec), zlab = paste("PC3: ", zvec))}
+        }
+           
+    if (cust.lab == TRUE){
+		if(method=="P"){title3d(main="Phenotypic Covariance Matrices", line=3,
+        	xlab = customLabel[1], ylab = customLabel[2], zlab = customLabel[3])}
+        }   
+
 	# add centroids and line here to mark plasticity?
   	rgl.spheres(x=c(e1mat$Locate[1],e2mat$Locate[1]),
   				y=c(e1mat$Locate[2],e2mat$Locate[2]),
   				z=c(e1mat$Locate[3],e2mat$Locate[3]),
-  				color=c("red","blue"),radius=0.25,alpha=0.5)
+  				color=c(shade.col.ref,shade.col.other),radius=0.25,alpha=0.5)
 	
 	rgl.lines(x=c(e1mat$Locate[1],e2mat$Locate[1]),
 				y=c(e1mat$Locate[2],e2mat$Locate[2]),	
