@@ -2,7 +2,6 @@
 #### Begin tensor.stats FUNCTION
 #### By Matt Robinson and Andrew Beckerman
 ####
-## Now Hosted on BitBucket (7.4.14)
 ## NOTE CURRENTLY EXPECT MODELS FIT TO RETURN JOINT POSTERIOR WITH LENGTH 1000
 ## ENSURE that your models have nitts (!) and burnin's set to deliver you 1000
 #### -----------------------------------------------------------------------------------------

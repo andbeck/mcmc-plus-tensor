@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------------------#
+2#--------------------------------------------------------------------------------------#
 ## derived.stats function by Robinson and Beckerman 2011
 ## this function takes two MCMCglmm models and the number of traits being modelled
 ## and returns 12 typical and common comparisons between covariance matrices
@@ -16,6 +16,12 @@
 
 #--------------------------------------------------------------------------------------#
 
+# TO BE DONE while not drunk
+# 1. use dim(mod$VCV) to get posteriors
+# 2. warning if <1000
+# 3. set all collections to nrows from 1.
+# 4. use nrows from 1. to set "test" for D, angles and vectors.
+
 derived.stats2<-function(model1,model2,no.traits){
 	print("This may take some time..... 30 seconds for 5 traits on a 2.4 core2duo macbook")
 	if (require(mvtnorm) == FALSE)
@@ -24,7 +30,9 @@ derived.stats2<-function(model1,model2,no.traits){
         stop("use only with \"MCMCglmm\" objects")
     if (!inherits(model2, "MCMCglmm")) 
         stop("use only with \"MCMCglmm\" objects")
-	
+    if (dim(model1$VCV)[1]<1000|dim(model2$VCV)[1]<1000) 
+        stop("You need joint posterior dimension > 1000; refit your models")	
+
 	# get variance-covariance posteriors
 	a<-data.frame(model1$VCV[,1:(no.traits)^2])
 	b<-data.frame(model2$VCV[,1:(no.traits)^2])
@@ -249,8 +257,7 @@ derived.stats2<-function(model1,model2,no.traits){
 	
 	
 	## CORE	
-	#OD	
-	# length(ang1diff[,1][ang1diff[,1]<0])/1000)*100)	old version of psi test.
+	#Ov D	
 	mcore[1,1:4]<-c(posterior.mode(mcmc(dist[,1])), HPDinterval(mcmc(dist[,1])),(1-length(distdiff[,1][distdiff[,1]<0])/1000))
 	
 	# Gmax		

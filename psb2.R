@@ -33,7 +33,7 @@
 # --ellisoid3d
 # --collect.matrices
 
-## Now Hosted on BitBucket (7.4.14)
+## Now Hosted on GitHub (7.4.14)
 ########################################################################################
 
 ###############################################################
@@ -113,7 +113,7 @@ collect.matrices<-function(model,no.traits,shrink=FALSE){
 psb2 <- function (model1,model2,no.traits,method=c("G","P"),
 	corr = FALSE, shadeCA = TRUE, shadeCB = TRUE, n=50,
 	shade.col.ref = "red", shade.col.other = "blue",
-    axes.lab = FALSE, cust.lab = FALSE, customLabel = NULL,...) 
+    axes.lab = FALSE, cust.lab = FALSE, customLabel = NULL,major = TRUE,...) 
 {
 	if (require(rgl) == FALSE)
         stop("rgl not loaded")
@@ -199,12 +199,12 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),
         zvec <- e1mat[3]
     		}
    else {
-        xvec <- paste("[", paste(round(Avec[, 1], 2), collapse = ","), 
-            "]", sep = "")
-        yvec <- paste("[", paste(round(Avec[, 2], 2), collapse = ","), 
-            "]", sep = "")
-        zvec <- paste("[", paste(round(Avec[, 3], 2), collapse = ","), 
-            "]", sep = "")
+        xvec <- paste("[ ", paste(round(Avec[, 1], 2), collapse = ", "), 
+            " ]", sep = "")
+        yvec <- paste("[ ", paste(round(Avec[, 2], 2), collapse = ", "), 
+            " ]", sep = "")
+        zvec <- paste("[ ", paste(round(Avec[, 3], 2), collapse = ", "), 
+            " ]", sep = "")
     		}
     nameA <- as.character(substitute(CA))
     nameA <- nameA[length(nameA)]
@@ -218,7 +218,14 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),
     axes3d()
     
     # Title and Axes Labels
-    if (axes.lab == TRUE) {
+    if (axes.lab == TRUE & major == TRUE) {
+        if(method=="G"){title3d(main="Genetic Covariance Matrices", line=3,
+        	xlab =paste("Gmax: ", xvec))}
+        if(method=="E"){title3d(main="E Covariance Matrices",
+        	xlab = paste("Gmax: ", xvec))}
+        	}
+        
+    if (axes.lab == TRUE & major == FALSE) {
         if(method=="G"){title3d(main="Genetic Covariance Matrices", line=3,
         	xlab = paste("PC1: ",xvec), ylab = paste("PC2: ",yvec), zlab = paste("PC3: ", zvec))}
         if(method=="E"){title3d(main="E Covariance Matrices",
@@ -294,12 +301,12 @@ psb2 <- function (model1,model2,no.traits,method=c("G","P"),
         zvec <- e1mat[3]
     		}
     else {
-        xvec <- paste("[", paste(round(Avec[, 1], 2), collapse = ","), 
-            "]", sep = "")
-        yvec <- paste("[", paste(round(Avec[, 2], 2), collapse = ","), 
-            "]", sep = "")
-        zvec <- paste("[", paste(round(Avec[, 3], 2), collapse = ","), 
-            "]", sep = "")
+        xvec <- paste("[ ", paste(round(Avec[, 1], 2), collapse = ","), 
+            " ]", sep = "")
+        yvec <- paste("[ ", paste(round(Avec[, 2], 2), collapse = ","), 
+            " ]", sep = "")
+        zvec <- paste("[ ", paste(round(Avec[, 3], 2), collapse = ","), 
+            " ]", sep = "")
     		}
     nameA <- as.character(substitute(CA))
     nameA <- nameA[length(nameA)]
