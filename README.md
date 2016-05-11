@@ -5,7 +5,8 @@ R code, simulated data etc for Robinson and Beckerman 2013 Ecology Letters doi: 
 
 Bayesian MCMC based Matrix Comparison and Tensor Based Analysis of Phenotypic Plasticity, Ageing and Population Gradients too.
 
-Updated 11 May 2016
+### Updated 11 May 2016
+
 1) unlocked restriction on 1000 samples.  Tools were requiring >=1000, and using 1000 as sample size.  Now uses sample size reported for model from MCMCglmm, which is the dimension of the $VCV output.
 
 2) removed deprecated EISPACK call in eigen usage
