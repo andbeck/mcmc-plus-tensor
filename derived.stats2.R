@@ -1,5 +1,5 @@
-2#--------------------------------------------------------------------------------------#
-## derived.stats function by Robinson and Beckerman 2011
+#--------------------------------------------------------------------------------------#
+## derived.stats function by Robinson and Beckerman 2011 (updated)
 ## this function takes two MCMCglmm models and the number of traits being modelled
 ## and returns 12 typical and common comparisons between covariance matrices
 ##
@@ -9,21 +9,18 @@
 ## the majority of the tests rely on a comparison of within and between samples from
 ## the posterior estimates of both matrices (see Ovaskainen 2008)
 ##
-## Now Hosted on BitBucket (7.4.14)
+## Now Hosted on GitHub
 ##
-## NOTE CURRENTLY EXPECT MODELS FIT TO RETURN JOINT POSTERIOR WITH LENGTH 1000
-## ENSURE that your models have nitts (!) and burnin's set to deliver you 1000
+## 11 May 2016 - no longer assumes fixed 1000 samples.  
+## Still requires minimum 1000, but more are allowed
+## Uses min(m1, m2) of sample size reported by MCMCglmm.summary
+
 
 #--------------------------------------------------------------------------------------#
 
-# TO BE DONE while not drunk
-# 1. use dim(mod$VCV) to get posteriors
-# 2. warning if <1000
-# 3. set all collections to nrows from 1.
-# 4. use nrows from 1. to set "test" for D, angles and vectors.
 
 derived.stats2<-function(model1,model2,no.traits){
-	print("This may take some time..... 30 seconds for 5 traits on a 2.4 core2duo macbook")
+	print("This may take some time..... 30 seconds for 5 traits with ~ 1000 sample size on a 2.4 core2duo macbook")
 	if (require(mvtnorm) == FALSE)
         stop("mvtnorm not loaded")
 	if (!inherits(model1, "MCMCglmm")) 
@@ -37,43 +34,52 @@ derived.stats2<-function(model1,model2,no.traits){
 	a<-data.frame(model1$VCV[,1:(no.traits)^2])
 	b<-data.frame(model2$VCV[,1:(no.traits)^2])
 	
+	# find sample size, set to min if the models have different sample sizes
+	rrows_a<-dim(a)[1]
+	rrows_b<-dim(b)[1]
+
+	if(rrows_a!=rrows_b){
+		rrows=min(rrows_a, rrows_b)
+	} else
+	{rrows = rrows_a}
+	
 	# Collection Zones for each statistic
-	angle1<-matrix(0,1000,1)
-	ang1diff<-matrix(0,1000,1)
-	angle2<-matrix(0,1000,1)
-	ang2diff<-matrix(0,1000,1)
-	dist<-matrix(0,1000,1)
-	distdiff<-matrix(0,1000,1)
-	sumS<-matrix(0,1000,1)
-	sumSdiff<-matrix(0,1000,1)
-	vol<-matrix(0,1000,3)
-	tvar<-matrix(0,1000,3)
-	ratio<-matrix(0,1000,3)
-	ratiodiff<-matrix(0,1000,1)
-	pvarGmax<-matrix(0,1000,3)
-	tci<-matrix(0,1000,1)
-	PeigA<-matrix(0,1000,(no.traits-1))
-	PeigB<-matrix(0,1000,(no.traits-1))
-	evs<-matrix(NA,1000,2)
-	evols<-matrix(NA,1000,2)
+	angle1<-matrix(0,rrows,1)
+	ang1diff<-matrix(0,rrows,1)
+	angle2<-matrix(0,rrows,1)
+	ang2diff<-matrix(0,rrows,1)
+	dist<-matrix(0,rrows,1)
+	distdiff<-matrix(0,rrows,1)
+	sumS<-matrix(0,rrows,1)
+	sumSdiff<-matrix(0,rrows,1)
+	vol<-matrix(0,rrows,3)
+	tvar<-matrix(0,rrows,3)
+	ratio<-matrix(0,rrows,3)
+	ratiodiff<-matrix(0,rrows,1)
+	pvarGmax<-matrix(0,rrows,3)
+	tci<-matrix(0,rrows,1)
+	PeigA<-matrix(0,rrows,(no.traits-1))
+	PeigB<-matrix(0,rrows,(no.traits-1))
+	evs<-matrix(NA,rrows,2)
+	evols<-matrix(NA,rrows,2)
 	
 	
-	# Take two random samples from each model output, 1000 times
-	a1<-a[sample(nrow(a),1000),] # e1
-	a2<-a[sample(nrow(a),1000),] # e1
+	# Take two random samples from each model output, rrows times
+	a1<-a[sample(nrow(a),rrows),] # e1
+	a2<-a[sample(nrow(a),rrows),] # e1
 	samp1e1<-cbind(a1[,1:(no.traits)^2]) # e1
 	samp2e1<-cbind(a2[,1:(no.traits)^2]) # e1
 	
-	a1<-b[sample(nrow(b),1000),] # e2
-	a2<-b[sample(nrow(b),1000),] # e2
+	a1<-b[sample(nrow(b),rrows),] # e2
+	a2<-b[sample(nrow(b),rrows),] # e2
 	samp1e2<-cbind(a1[,1:(no.traits)^2]) # e2
 	samp2e2<-cbind(a2[,1:(no.traits)^2]) # e2
 
 	#--------------------------------------------------------------------------------------#
-	# Loop to generate 1000 tests
+	# Loop to generate rrows > 1000 tests
 	#--------------------------------------------------------------------------------------#
 
-	for (i in 1:1000){
+	for (i in 1:rrows){
 		
 		# Create Sampled G-matrices
 		d1<-matrix(as.numeric(samp1e1[i,][,1:(no.traits)^2]),no.traits,no.traits)
@@ -113,10 +119,10 @@ derived.stats2<-function(model1,model2,no.traits){
 			ang2diff[i,][1]<-(e1a2 + e2a2) - e1_2a2
 	
 		# Eigensystem of matrices 
-	    	env1_1<-eigen(d1, EISPACK=TRUE)
-	    	env1_2<-eigen(d2, EISPACK=TRUE)
-	    	env2_1<-eigen(d3, EISPACK=TRUE)
-	    	env2_2<-eigen(d4, EISPACK=TRUE)
+	    	env1_1<-eigen(d1)
+	    	env1_2<-eigen(d2)
+	    	env2_1<-eigen(d3)
+	    	env2_2<-eigen(d4)
 	
 		# No Sig Eigenvectors for each matrix
       	
@@ -205,7 +211,7 @@ derived.stats2<-function(model1,model2,no.traits){
 		# project E2 into E1 space
 		E2proj<-t(E1Vecs) %*% d3 %*% (E1Vecs)
 		# calc eigensystem of projected E2
-		e2Proj.eig<-eigen(E2proj, EISPACK=TRUE)
+		e2Proj.eig<-eigen(E2proj)
 		E2ProjVals<-e2Proj.eig$values
 		#calculate prop in threespace for E2
 		E2proj_map<-round(100*sum(E2ProjVals[1:3])/sum(E2Vals))
@@ -258,7 +264,7 @@ derived.stats2<-function(model1,model2,no.traits){
 	
 	## CORE	
 	#Ov D	
-	mcore[1,1:4]<-c(posterior.mode(mcmc(dist[,1])), HPDinterval(mcmc(dist[,1])),(1-length(distdiff[,1][distdiff[,1]<0])/1000))
+	mcore[1,1:4]<-c(posterior.mode(mcmc(dist[,1])), HPDinterval(mcmc(dist[,1])),(1-length(distdiff[,1][distdiff[,1]<0])/rrows))
 	
 	# Gmax		
 	mcore[2,1:4]<-c(posterior.mode(mcmc(pvarGmax[,1])), HPDinterval(mcmc(pvarGmax[,1])),
@@ -269,7 +275,7 @@ derived.stats2<-function(model1,model2,no.traits){
 		ifelse(all(HPDinterval(mcmc(pvarGmax[,3]))>0)|all(HPDinterval(mcmc(pvarGmax[,3]))<0),0.05,NA))
 
 	# Angles		
-	mcore[5,1:4]<-c(posterior.mode(mcmc(angle1[,1])), HPDinterval(mcmc(angle1[,1])), (1-length(ang1diff[,1][ang1diff[,1]<0])/1000))
+	mcore[5,1:4]<-c(posterior.mode(mcmc(angle1[,1])), HPDinterval(mcmc(angle1[,1])), (1-length(ang1diff[,1][ang1diff[,1]<0])/rrows))
 			
 	# Difference in prob-Volume (if all positive, A>B; if all negative B>A)
 	mcore[6,1:4]<-c(posterior.mode(mcmc(vol[,1])),HPDinterval(mcmc(vol[,1])),
@@ -306,11 +312,11 @@ derived.stats2<-function(model1,model2,no.traits){
 				ifelse(all(HPDinterval(mcmc(ratio[,1]))>0)|all(HPDinterval(mcmc(ratio[,1]))<0),0.05,NA))
 	meccs[2,1:4]<-c(posterior.mode(mcmc(ratio[,2])),HPDinterval(mcmc(ratio[,2])),
 				ifelse(all(HPDinterval(mcmc(ratio[,2]))>0)|all(HPDinterval(mcmc(ratio[,2]))<0),0.05,NA))
-	meccs[3,1:4]<-c(posterior.mode(mcmc(ratio[,3])),HPDinterval(mcmc(ratio[,3])), (1-length(ratiodiff[,1][ratiodiff[,1]<0])/1000))						
+	meccs[3,1:4]<-c(posterior.mode(mcmc(ratio[,3])),HPDinterval(mcmc(ratio[,3])), (1-length(ratiodiff[,1][ratiodiff[,1]<0])/rrows))						
 	
-	cat(paste("Here are the derived Statistics - some acos() warnings are expected out of 1000",
+	cat(paste("Here are the derived Statistics - some acos() warnings are expected out of ",rrows, "iterations",
 		"\n","TCI will be 0 if there are only 3 traits","\n",
-		"*[psi<0] is appropriate for Ovaskainen D, Angle and Vectors. All others are 95% Credible Intervals and p<0.05 indicates that the CI does not include 0.","\n","\n","*If psi<0.05,between differences were larger than within differences 950 or more times out of 1000","\n","\n"))
+		"*[psi<0] is appropriate for Ovaskainen D, Angle and Vectors. All others are 95% Credible Intervals and p<0.05 indicates that the CI does not include 0.","\n","\n","*If psi<0.05,between differences were larger than within differences 95% of ", rrows, "samples","\n","\n"))
 	return(list(CoreStats=round(mcore,3),Vectors=mvecs,Nd_Evolv=round(Nd_evol,3),Eccentricity=round(meccs,3)))
 
 }
