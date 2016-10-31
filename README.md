@@ -12,3 +12,6 @@ Bayesian MCMC based Matrix Comparison and Tensor Based Analysis of Phenotypic Pl
 2) removed deprecated EISPACK call in eigen usage
 
 3) Cleaned up reporting to map onto new sample size
+
+### Updated 31 Oct 2016
+1) fixed criteria for signficance test on eigenvalues.  Previous versions estimated criteria at <50 using 0.05*1000 samples.  Now that 1000 limit is relaxed, criteria is now 0.05 * no. samples (nnrow) of posterior.  Thanks to lynn govaert.
