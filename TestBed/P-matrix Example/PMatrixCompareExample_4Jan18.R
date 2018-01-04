@@ -65,6 +65,10 @@ segments(rep(0.95,800),traits$trait5,rep(1.95,800),traits$trait10,rgb(1,1,0,0.1)
 # and various other things linked to annnotation by RGL package
 # axes.lab = TRUE plots the loadings from the 'PCA' onto the 3 axes as labels
 
+# output in R inlcudes test of plasticity (SHIFT IN CENTROID)
+# output in R includes loadings on PC1-3 axis
+# output in R includes estimate of variance on PC1-3 in E1 and in E2
+
 psb2(model4.1P.1, model4.2P.1, no.traits = 5, method = "P", axes.lab = TRUE)
 
 
