@@ -14,6 +14,9 @@
 ## 11 May 2016 - no longer assumes fixed 1000 samples.  
 ## Still requires minimum 1000, but more are allowed
 ## Uses min(m1, m2) of sample size reported by MCMCglmm.summary
+##
+## 31 Oct 2016 - fixed significance test of no. vectors which had 0.05*1000 to make <50 as criteria
+## where it should now be 0.05 *rrows as 1000 has been relaxed.  Thanks to Lynn Goevart.
 
 
 #--------------------------------------------------------------------------------------#
@@ -229,8 +232,8 @@ derived.stats2<-function(model1,model2,no.traits){
 	#--------------------------------------------------------------------------------------#
 	## vec calc to help presentation
 	#--------------------------------------------------------------------------------------#
-	A<-sum(apply(PeigA,2,function(x)length(x[x<0]))<50)
-	B<-sum(apply(PeigB,2,function(x)length(x[x<0]))<50)
+	A<-sum(apply(PeigA,2,function(x)length(x[x<0]))<0.05*rrows)
+	B<-sum(apply(PeigB,2,function(x)length(x[x<0]))<0.05*rrows)
 	
 	#--------------------------------------------------------------------------------------#
 	## collection and printing
