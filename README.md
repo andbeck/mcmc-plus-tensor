@@ -14,6 +14,7 @@ Bayesian MCMC based Matrix Comparison and Tensor Based Analysis of Phenotypic Pl
 3) Cleaned up reporting to map onto new sample size
 
 ### Updated 31 Oct 2016
+<<<<<<< HEAD
 1) fixed criteria for signficance test on eigenvalues.  Previous versions estimated criteria at <50 using 0.05*1000 samples.  Now that 1000 limit is relaxed, criteria is now 0.05 * no. samples (nnrow) of posterior.  
 
 2) Uses min(m1, m2) of sample size reported by MCMCglmm.summary. 
@@ -22,3 +23,9 @@ Thanks to lynn govaert.
 
 ### 4 July 2018 - 
 Ovaskainen's Divergence test is incorrect.  Currently being fixed and using July 2018 modified `Ddivergence()` function from MCMCglmm package. Adding use of dplyr code in several places.
+=======
+1) fixed criteria for signficance test on eigenvalues.  Previous versions estimated criteria at <50 using 0.05*1000 samples.  Now that 1000 limit is relaxed, criteria is now 0.05 * no. samples (nnrow) of posterior.  Thanks to lynn govaert.
+
+### D-divergence (Ovaskainen's test) is incorrect in this version
+It is currently being fixed using a recently patched update to the Ddivergence() funtion in MCMCglmm
+>>>>>>> master

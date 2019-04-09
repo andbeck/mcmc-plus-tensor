@@ -86,18 +86,6 @@ derived.stats2 <- function(model1,model2,no.traits){
   evs <- matrix(NA,rrows,2)
   evols <- matrix(NA,rrows,2)
   
-  
-  # Take two random samples from each model output, rrows times
-  # a1 <- a[sample(nrow(a),rrows),] # e1
-  # a2 <- a[sample(nrow(a),rrows),] # e1
-  # samp1e1 <- cbind(a1[,1:(no.traits)^2]) # e1
-  # samp2e1 <- cbind(a2[,1:(no.traits)^2]) # e1
-  # 
-  # a1 <- b[sample(nrow(b),rrows),] # e2
-  # a2 <- b[sample(nrow(b),rrows),] # e2
-  # samp1e2 <- cbind(a1[,1:(no.traits)^2]) # e2
-  # samp2e2 <- cbind(a2[,1:(no.traits)^2]) # e2
-  
   # scrambled/sampled VCVs: 2 within each model/environment
   sample_1_mod_e1  <-  sample_n(a, rrows) # model 1 sample 1
   sample_2_mod_e1  <-  sample_n(a, rrows) # model 1 sample 2
@@ -143,29 +131,6 @@ derived.stats2 <- function(model1,model2,no.traits){
     
     # Divergence test stat (psi-stat)
     distdiff[i,]  <-  (AA + BB) - (AB + BA) # divergence test statistics (Ovaskainen's psi)
-    
-    ### OLD ------------------------------------------
-    # Create Sampled G-matrices
-    # 	d1 <- matrix(as.numeric(samp1e1[i,][,1:(no.traits)^2]),no.traits,no.traits)
-    #     	d2 <- matrix(as.numeric(samp2e1[i,][,1:(no.traits)^2]),no.traits,no.traits)
-    # 	d3 <- matrix(as.numeric(samp1e2[i,][,1:(no.traits)^2]),no.traits,no.traits)
-    #     	d4 <- matrix(as.numeric(samp2e2[i,][,1:(no.traits)^2]),no.traits,no.traits)
-    
-    # Estimate univariate distributions underlying multivariate space
-    # dx1 <- dmvnorm(d1,rep(0,dim(d1)[1]),d1)
-    # dx2 <- dmvnorm(d2,rep(0,dim(d2)[1]),d2)
-    # dx3 <- dmvnorm(d3,rep(0,dim(d3)[1]),d3)
-    # dx4 <- dmvnorm(d4,rep(0,dim(d4)[1]),d4)
-    
-    # # Oksavainen differences
-    # e1diff <- mean(sqrt(0.5 * ((dx1 - dx2)^2)/(dx1 + dx2)))
-    # e2diff <- mean(sqrt(0.5 * ((dx3 - dx4)^2)/(dx3 + dx4)))
-    # e1e2d <- mean(sqrt(0.5 * ((dx1 - dx3)^2)/(dx1 + dx3))) + mean(sqrt(0.5 * ((dx2 - dx4)^2)/(dx2 + dx4)))
-    # 
-    # # Oksavainen distance test
-    # dist[i,][1] <- mean(sqrt(0.5 * ((dx1 - dx3)^2)/(dx1 + dx3)))
-    # distdiff[i,][1] <- (e1diff + e2diff) - e1e2d
-    # --------------------------------------------------------------------
     
     # Krzanowski tests to get angles between Gmax --------------------------
     
