@@ -129,8 +129,8 @@ prior1<-list(R=list(V=diag(5)*0.02, nu=6),
 # load multicore package, rgl, derived stats function and psb plot function
 library(multicore)
 library(rgl)
-source('~/Dropbox/###Subspace/Manuscript/AnalysisFunctions/derived.stats2.R', chdir = TRUE)
-source('~/Dropbox/###Subspace/Manuscript/AnalysisFunctions/psb2.R', chdir = TRUE)
+source('~/Documents/GitHub/mcmc-plus-tensor/Matrix_Tensor_Functions/derived.stats2.R', chdir = TRUE)
+source('~/Documents/GitHub/mcmc-plus-tensor/Matrix_Tensor_Functions/psb2.R', chdir = TRUE)
 
 # all data made, and now collected into a list with indices.
 alldat<-list(data1,data2,data3,data4,data5)
@@ -182,7 +182,7 @@ psb2(mods[[1]][[5]],mods[[2]][[5]], no.traits=5, method="G",shadeCB=FALSE)
 ## The long way
 ##------------------------------------------------------------------------------------------------------
 
-## models
+## G -models
 model1.1<-MCMCglmm(cbind(trait1, trait2, trait3, trait4, trait5)  ~ trait-1, random=~us(trait):sire, rcov=~us(trait):units, family=c("gaussian","gaussian","gaussian","gaussian", "gaussian"), prior=prior1, data=data1[[1]], verbose=FALSE, burnin=50000, thin=100, nitt=150000)
 model1.2<-MCMCglmm(cbind(trait6, trait7, trait8, trait9, trait10) ~ trait-1, random=~us(trait):sire, rcov=~us(trait):units, family=c("gaussian","gaussian","gaussian","gaussian", "gaussian"), prior=prior1, data=data1[[1]], verbose=FALSE, burnin=50000, thin=100, nitt=150000)
 
